@@ -39,8 +39,13 @@ def create():
         db.session.commit()
         return redirect('/')
     
+@app.route('/', methods=['GET'])    
+def Home():
+    students = StudentModel.query.all()
+    return render_template('home.html', students=students, request=request)
+
 @app.route('/view', methods=['GET'])    
-def DisplayList():
+def ViewList():
     students = StudentModel.query.all()
     return render_template('home.html', students=students, request=request)
 
@@ -85,11 +90,6 @@ def edit(id):
             return redirect('/')
 
     return render_template('edit.html', student=student, request=request) 
-
-@app.route('/')
-def home():
-
-    return render_template('home.html', request = request)
     
 if __name__ == '__main__':
     app.run(host='localhost', port=5000, debug=True)

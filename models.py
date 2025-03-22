@@ -12,9 +12,9 @@ class StudentModel(db.Model):
     password = db.Column(db.String())
     gender = db.Column(db.String())
     hobbies = db.Column(db.String())
-    counry = db.Column(db.String(30))
+    country = db.Column(db.String(30))
 
-    def __init__ (self, first_name, second_name, email, password, gender, hobbies, counry):
+    def __init__ (self, first_name, second_name, email, password, gender, hobbies, country):
 
         self.first_name = first_name
         self.last_name = second_name
@@ -22,7 +22,7 @@ class StudentModel(db.Model):
         self.password = password
         self.gender = gender
         self.hobbies = hobbies
-        self.counry = counry
+        self.country = country
 
         def __repr__(self):
-            return f"(self.first_name):(self.last_name)"
+            return f"{self.first_name}:{self.last_name}"

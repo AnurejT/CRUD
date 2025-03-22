@@ -24,7 +24,7 @@ def create():
         email = request.form['email']
         password = request.form['password']
         gender = request.form['gender']
-        country = request.form['counry']
+        country = request.form['country']
 
         student = StudentModel(
             first_name=first_name,
@@ -33,7 +33,7 @@ def create():
             password=password,
             gender=gender, 
             hobbies=hobbies,
-            counry=country
+            country=country
         )
         db.session.add(student)
         db.session.commit()
@@ -74,7 +74,7 @@ def edit(id):
             email = request.form['email']
             password = request.form['password']
             gender = request.form['gender']
-            country = request.form['counry']
+            country = request.form['country']
 
             student = StudentModel(
                 first_name=first_name,
@@ -83,7 +83,7 @@ def edit(id):
                 password=password,
                 gender=gender, 
                 hobbies=hobbies,
-                counry=country
+                country=country
             )
             db.session.add(student)
             db.session.commit()

@@ -1,7 +1,8 @@
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, render_template, redirect, flash, session
 from models import db, StudentModel
 
 app = Flask(__name__)
+app.secret_key = "your_secret_key" 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -90,6 +91,19 @@ def edit(id):
             return redirect('/')
 
     return render_template('edit.html', student=student, request=request) 
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['studentid']
+        password = request.form['password']
+
+        if username == 'anurej' and password == '123':
+            return redirect('/')
+        else:
+            flash("Invalid username or password", "danger")  
+
+    return render_template('login.html')
     
 if __name__ == '__main__':
     app.run(host='localhost', port=5000, debug=True)

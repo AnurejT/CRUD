@@ -1,48 +1,206 @@
-{% extends 'master.html'%}
-{% include 'header.html' %}
-
-{% block title%} Add Student {% endblock %}
+{% extends 'master.html' %}
+{% block title %}Dashboard — StudentHub{% endblock %}
 
 {% block body %}
+<div class="main-content">
 
-<div class="container">
-    <div>
-        <div class="col-md-12 text-center"><h1>Students List</h1></div>
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1><i class="fas fa-users" style="color:var(--accent); margin-right:10px;"></i>Student Dashboard</h1>
+        <p>Manage and view all student records in one place.</p>
     </div>
-    <div>
-        <table class="table">
-            <thead style="background-color: brown;color: aliceblue;">
-                <th>ID</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Gender</th>
-                <th>Hobbies</th>
-                <th>Country</th>
-                <th>Actions</th>
-            </thead>
-            <tbody>
-                {% for student in students %}
-                <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ student.first_name }}</td>
-                    <td>{{ student.last_name }}</td>
-                    <td>{{ student.email }}</td>
-                    <td>{{ student.gender }}</td>
-                    <td>{{ student.hobbies }}</td>
-                    <td>{{ student.country }}</td>
-                    <td>
-                        <span style="font-size: 24px;color: green;">
-                            <a href="/edit/{{student.id}}"> <i class="fas fa-edit"></i></a></span>
 
-                        <span style="font-size: 24px;color: red;">
-                            <a href="/delete/{{student.id}}"> <i class="fas fa-trash-alt"></i></a></span>    
-                    </td>
-                </tr>
+    <!-- Stats Row -->
+    {% set male_count   = students | selectattr('gender','equalto','male')   | list | length %}
+    {% set female_count = students | selectattr('gender','equalto','female') | list | length %}
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-icon purple"><i class="fas fa-users"></i></div>
+            <div>
+                <div class="stat-value">{{ total }}</div>
+                <div class="stat-label">Total Students</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon cyan"><i class="fas fa-mars"></i></div>
+            <div>
+                <div class="stat-value">{{ male_count }}</div>
+                <div class="stat-label">Male (this page)</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon amber"><i class="fas fa-venus"></i></div>
+            <div>
+                <div class="stat-value">{{ female_count }}</div>
+                <div class="stat-label">Female (this page)</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green"><i class="fas fa-globe"></i></div>
+            <div>
+                <div class="stat-value">{{ students | map(attribute='country') | unique | list | length }}</div>
+                <div class="stat-label">Countries (this page)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">All Students</span>
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <!-- Search -->
+                <form method="GET" action="{{ url_for('home') }}" id="search-form" style="display:flex;gap:8px;">
+                    <div class="search-box">
+                        <i class="fas fa-magnifying-glass"></i>
+                        <input type="text" name="search" id="search-input"
+                               placeholder="Search name, email, country…"
+                               value="{{ search }}"
+                               autocomplete="off">
+                    </div>
+                    {% if search %}
+                    <a href="{{ url_for('home') }}" class="btn btn-ghost btn-sm"><i class="fas fa-xmark"></i></a>
+                    {% endif %}
+                </form>
+                <a href="{{ url_for('create') }}" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> Add Student
+                </a>
+            </div>
+        </div>
+
+        {% if students %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Gender</th>
+                        <th>Hobbies</th>
+                        <th>Country</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td style="color:var(--muted); font-size:0.8rem;">{{ (pagination.page - 1) * pagination.per_page + loop.index }}</td>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div style="width:36px;height:36px;border-radius:50%;
+                                    background:linear-gradient(135deg,var(--accent),var(--accent2));
+                                    display:flex;align-items:center;justify-content:center;
+                                    font-weight:700;font-size:0.85rem;color:#fff;flex-shrink:0;">
+                                    {{ student.first_name[0] | upper }}{{ student.last_name[0] | upper }}
+                                </div>
+                                <div>
+                                    <div style="font-weight:600;">{{ student.first_name }} {{ student.last_name }}</div>
+                                    <div style="font-size:0.75rem;color:var(--muted);">ID #{{ student.id }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="color:var(--muted);">{{ student.email }}</td>
+                        <td>
+                            <span class="badge badge-{{ student.gender }}">
+                                {% if student.gender == 'male' %}<i class="fas fa-mars" style="margin-right:4px;"></i>
+                                {% elif student.gender == 'female' %}<i class="fas fa-venus" style="margin-right:4px;"></i>
+                                {% else %}<i class="fas fa-genderless" style="margin-right:4px;"></i>{% endif %}
+                                {{ student.gender | capitalize }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if student.hobbies %}
+                                {% for h in student.hobbies.split(',') %}
+                                    {% if h.strip() %}
+                                    <span class="hobby-tag">{{ h.strip() | capitalize }}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <span style="color:var(--muted);font-size:0.8rem;">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:6px;">
+                                <i class="fas fa-location-dot" style="color:var(--muted);font-size:0.75rem;"></i>
+                                {{ student.country }}
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display:flex;gap:6px;">
+                                <a href="{{ url_for('edit', id=student.id) }}"
+                                   class="action-btn action-edit"
+                                   title="Edit student">
+                                    <i class="fas fa-pen-to-square"></i>
+                                </a>
+                                <a href="{{ url_for('delete', id=student.id) }}"
+                                   class="action-btn action-delete"
+                                   title="Delete student">
+                                    <i class="fas fa-trash-can"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if pagination.pages > 1 %}
+        <div style="padding:1rem 1.5rem; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+            <span style="font-size:0.8rem;color:var(--muted);">
+                Showing {{ (pagination.page-1)*pagination.per_page+1 }}–{{ [(pagination.page*pagination.per_page), total] | min }} of {{ total }} students
+            </span>
+            <div class="pagination">
+                <a class="page-btn {% if not pagination.has_prev %}disabled{% endif %}"
+                   href="{{ url_for('home', page=pagination.prev_num, search=search) }}">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+                {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if p %}
+                        <a class="page-btn {% if p == pagination.page %}active{% endif %}"
+                           href="{{ url_for('home', page=p, search=search) }}">{{ p }}</a>
+                    {% else %}
+                        <span class="page-btn" style="pointer-events:none;">…</span>
+                    {% endif %}
                 {% endfor %}
-            </tbody>
-        </table>
+                <a class="page-btn {% if not pagination.has_next %}disabled{% endif %}"
+                   href="{{ url_for('home', page=pagination.next_num, search=search) }}">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-user-slash"></i>
+            {% if search %}
+            <p>No students match "<strong>{{ search }}</strong>".</p>
+            <a href="{{ url_for('home') }}" class="btn btn-ghost" style="margin-top:12px;">Clear search</a>
+            {% else %}
+            <p>No students yet. Add your first student to get started.</p>
+            <a href="{{ url_for('create') }}" class="btn btn-primary" style="margin-top:12px;">
+                <i class="fas fa-user-plus"></i> Add Student
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
     </div>
 </div>
 
+<script>
+    // Live search with debounce
+    let searchTimer;
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => {
+                document.getElementById('search-form').submit();
+            }, 500);
+        });
+    }
+</script>
 {% endblock %}

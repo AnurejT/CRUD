@@ -1,101 +1,137 @@
 {% extends 'master.html' %}
-{% include 'header.html' %}
-
-{% block title%} Add Student {% endblock %}
+{% block title %}Edit Student — StudentHub{% endblock %}
 
 {% block body %}
-<div class = "container">
-    <form action="" method="post">
-        <table class="table">
-            <tr>
-                <td>First Name</td>
-                <td><input type="text" name="first_name" class="form-control" value="{{student.first_name}}"></td>
-            </tr>
-            <tr>
-                <td>Last Name</td>
-                <td><input type="text" name="second_name" class="form-control" value="{{student.last_name}}"></td>
-            </tr>
-            <tr>
-                <td>Email</td>
-                <td><input type="email" name="email" class="form-control" value="{{student.email}}"></td>
-            </tr>
-            <tr>
-                <td>Password</td>
-                <td><input type="password" name="password" class="form-control" value="{{student.password}}"></td>
-            </tr>
-            <tr>
-                <td>Gender</td>
-                <td>
-                Male : <input type="radio" name="gender" value="male"
-                {% if student.gender == 'male' %}
-                        checked
-                {% endif %}
-                />
-                Female : <input type="radio" name="gender" value="female"
-                {% if student.gender == 'female' %}
-                        checked
-                {% endif %}>
-                Other : <input type="radio" name="gender" value="other"
-                {% if student.gender == 'other' %}
-                        checked
-                {% endif %}
-                />
-                </td>
-            </tr>
-            <tr>
-                <td>Hobbies</td>
-                <td>
-                Cricket : <input type="checkbox" name="hobbies" value="cricket"
-                {% if 'cricket' in student.hobbies %}
-                        checked
-                {% endif %}
-                />
-                Movies : <input type="checkbox" name="hobbies" value="movies"
-                {% if 'movies' in student.hobbies %}
-                        checked
-                {% endif %}>
-                Tv : <input type="checkbox" name="hobbies" value="tv"
-                {% if 'tv' in student.hobbies %}
-                        checked
-                {% endif %}
-                />
-                </td>
-            </tr>
-            <tr>
-                <td>Country</td>
-                <td>
-                    <select name="country" class="form-control">
-                        <option value="INDIA"
-                        {% if 'INDIA' in student.country %}
-                                selected
-                        {% endif %}        
-                        >INDIA</option>
-                        <option value="AMERICA"
-                        {% if 'AMERICA' in student.country %}
-                                selected
-                        {% endif %}  
-                        >AMERICA</option>
-                        <option value="IRELAND"
-                        {% if 'IRELAND' in student.country %}
-                                selected
-                        {% endif %}   
-                        >IRELAND</option>
-                        <option value="UK"
-                        {% if 'UK' in student.country %}
-                                selected
-                        {% endif %}   
-                        >UK</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input type="submit" name="submit" value="submit" class="btn btn-warning">
-                </td>
-            </tr>
-        </table>
-    </form>
+<div class="main-content">
+    <div class="breadcrumb">
+        <a href="{{ url_for('home') }}"><i class="fas fa-table-columns"></i> Dashboard</a>
+        <i class="fas fa-chevron-right" style="font-size:0.65rem;"></i>
+        <span>Edit Student</span>
+    </div>
+    <div class="page-header">
+        <h1><i class="fas fa-pen-to-square" style="color:var(--accent);margin-right:10px;"></i>Edit Student</h1>
+        <p>Update the details for <strong>{{ student.first_name }} {{ student.last_name }}</strong>.</p>
+    </div>
 
+    <div class="card" style="max-width:780px;">
+        <div class="card-header">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <div style="width:44px;height:44px;border-radius:50%;
+                    background:linear-gradient(135deg,var(--accent),var(--accent2));
+                    display:flex;align-items:center;justify-content:center;
+                    font-weight:700;font-size:1rem;color:#fff;">
+                    {{ student.first_name[0]|upper }}{{ student.last_name[0]|upper }}
+                </div>
+                <div>
+                    <div class="card-title">{{ student.first_name }} {{ student.last_name }}</div>
+                    <div style="font-size:0.78rem;color:var(--muted);">ID #{{ student.id }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('edit', id=student.id) }}" method="POST" novalidate>
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="first_name">First Name</label>
+                        <input class="input" type="text" id="first_name" name="first_name"
+                               value="{{ student.first_name }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="second_name">Last Name</label>
+                        <input class="input" type="text" id="second_name" name="second_name"
+                               value="{{ student.last_name }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input class="input" type="email" id="email" name="email"
+                               value="{{ student.email }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div style="position:relative;">
+                            <input class="input" type="password" id="password" name="password"
+                                   value="{{ student.password }}" required style="padding-right:42px;">
+                            <button type="button" onclick="togglePass('password', this)"
+                                    style="position:absolute;right:12px;top:50%;transform:translateY(-50%);
+                                           background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.9rem;">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="gender" value="male"
+                                    {% if student.gender == 'male' %}checked{% endif %}> Male
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="gender" value="female"
+                                    {% if student.gender == 'female' %}checked{% endif %}> Female
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="gender" value="other"
+                                    {% if student.gender == 'other' %}checked{% endif %}> Other
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="country">Country</label>
+                        <select class="input" id="country" name="country" required>
+                            {% for val, label in [('INDIA','🇮🇳 India'),('AMERICA','🇺🇸 America'),
+                                                  ('IRELAND','🇮🇪 Ireland'),('UK','🇬🇧 United Kingdom'),
+                                                  ('CANADA','🇨🇦 Canada'),('AUSTRALIA','🇦🇺 Australia')] %}
+                            <option value="{{ val }}" {% if student.country == val %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>Hobbies</label>
+                        <div class="check-group">
+                            {% for val, emoji, lbl in [('cricket','🏏','Cricket'),('movies','🎬','Movies'),
+                                                       ('tv','📺','TV'),('music','🎵','Music'),
+                                                       ('reading','📚','Reading'),('gaming','🎮','Gaming')] %}
+                            <label class="check-label">
+                                <input type="checkbox" name="hobbies" value="{{ val }}"
+                                    {% if student.hobbies and val in student.hobbies %}checked{% endif %}>
+                                {{ emoji }} {{ lbl }}
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="form-group full" style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;">
+                        <a href="{{ url_for('home') }}" class="btn btn-ghost">
+                            <i class="fas fa-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-floppy-disk"></i> Save Changes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
+<script>
+function togglePass(id, btn) {
+    const inp = document.getElementById(id);
+    const icon = btn.querySelector('i');
+    if (inp.type === 'password') {
+        inp.type = 'text';
+        icon.classList.replace('fa-eye','fa-eye-slash');
+    } else {
+        inp.type = 'password';
+        icon.classList.replace('fa-eye-slash','fa-eye');
+    }
+}
+</script>
 {% endblock %}

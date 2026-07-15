@@ -1,14 +1,47 @@
-{% extends 'master.html'%}
-{% include 'header.html'%}
-
-{% block title %} Home {% endblock %}
+{% extends 'master.html' %}
+{% block title %}Delete Student — StudentHub{% endblock %}
 
 {% block body %}
-<div class="container">
-    <form action="" method="post">
-        click YES to confirm
-        <input type="submit" value="YES" class="btn btn-danger">
-        <a href='/'>Cancel</a>
-    </form>
+<div class="main-content" style="display:flex; align-items:center; justify-content:center; min-height:calc(100vh - 64px);">
+    <div class="card danger-card" style="max-width:480px; width:100%; text-align:center; padding:2.5rem;">
+
+        <div class="danger-icon" style="margin:0 auto;">
+            <i class="fas fa-triangle-exclamation"></i>
+        </div>
+
+        <h2 style="font-size:1.4rem; font-weight:800; margin-bottom:8px;">Delete Student?</h2>
+        <p style="color:var(--muted); margin-bottom:1.5rem; font-size:0.9rem; line-height:1.6;">
+            You are about to permanently delete
+            <strong style="color:var(--text);">{{ student.first_name }} {{ student.last_name }}</strong>
+            ({{ student.email }}).
+            <br>This action <strong style="color:var(--red);">cannot be undone</strong>.
+        </p>
+
+        <!-- Student mini-card -->
+        <div style="background:var(--surface2); border:1px solid var(--border);
+                    border-radius:10px; padding:1rem; margin-bottom:1.5rem;
+                    display:flex; align-items:center; gap:12px; text-align:left;">
+            <div style="width:44px;height:44px;border-radius:50%;flex-shrink:0;
+                background:linear-gradient(135deg,var(--red),#b91c1c);
+                display:flex;align-items:center;justify-content:center;
+                font-weight:700;font-size:0.9rem;color:#fff;">
+                {{ student.first_name[0]|upper }}{{ student.last_name[0]|upper }}
+            </div>
+            <div>
+                <div style="font-weight:600;">{{ student.first_name }} {{ student.last_name }}</div>
+                <div style="font-size:0.78rem;color:var(--muted);">{{ student.email }} • {{ student.country }}</div>
+            </div>
+        </div>
+
+        <form action="{{ url_for('delete', id=student.id) }}" method="POST"
+              style="display:flex; gap:10px; justify-content:center;">
+            <a href="{{ url_for('home') }}" class="btn btn-ghost">
+                <i class="fas fa-arrow-left"></i> Cancel
+            </a>
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash-can"></i> Yes, Delete
+            </button>
+        </form>
+    </div>
 </div>
 {% endblock %}

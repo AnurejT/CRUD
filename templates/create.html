@@ -1,61 +1,122 @@
 {% extends 'master.html' %}
-{% include 'header.html' %}
-
-{% block title%} Add Student {% endblock %}
+{% block title %}Add Student — StudentHub{% endblock %}
 
 {% block body %}
-<div class = "container">
-    <form action="" method="post">
-        <table class="table">
-            <tr>
-                <td>First Name</td>
-                <td><input type="text" name="first_name" class="form-control"></td>
-            </tr>
-            <tr>
-                <td>Last Name</td>
-                <td><input type="text" name="second_name" class="form-control"></td>
-            </tr>
-            <tr>
-                <td>Email</td>
-                <td><input type="email" name="email" class="form-control"></td>
-            </tr>
-            <tr>
-                <td>Password</td>
-                <td><input type="password" name="password" class="form-control"></td>
-            </tr>
-            <tr>
-                <td>Gender</td>
-                <td>
-                Male : <input type="radio" name="gender" value="male">
-                Female : <input type="radio" name="gender" value="female">
-                Other : <input type="radio" name="gender" value="other"></td>
-            </tr>
-            <tr>
-                <td>Hobbies</td>
-                <td>
-                Cricket : <input type="checkbox" name="hobbies" value="cricket">
-                Movies : <input type="checkbox" name="hobbies" value="movies">
-                Tv : <input type="checkbox" name="hobbies" value="tv"></td>
-            </tr>
-            <tr>
-                <td>Country</td>
-                <td>
-                    <select name="country" class="form-control">
-                        <option value="INDIA">INDIA</option>
-                        <option value="AMERICA">AMERICA</option>
-                        <option value="IRELAND">IRELAND</option>
-                        <option value="UK">UK</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input type="submit" name="submit" value="submit" class="btn btn-warning">
-                </td>
-            </tr>
-        </table>
-    </form>
+<div class="main-content">
+    <div class="breadcrumb">
+        <a href="{{ url_for('home') }}"><i class="fas fa-table-columns"></i> Dashboard</a>
+        <i class="fas fa-chevron-right" style="font-size:0.65rem;"></i>
+        <span>Add Student</span>
+    </div>
+    <div class="page-header">
+        <h1><i class="fas fa-user-plus" style="color:var(--accent);margin-right:10px;"></i>Add New Student</h1>
+        <p>Fill in the details below to register a new student.</p>
+    </div>
 
+    <div class="card" style="max-width:780px;">
+        <div class="card-header">
+            <span class="card-title"><i class="fas fa-id-card" style="color:var(--accent2);margin-right:8px;"></i>Student Information</span>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('create') }}" method="POST" id="create-form" novalidate>
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="first_name">First Name</label>
+                        <input class="input" type="text" id="first_name" name="first_name"
+                               placeholder="e.g. Anurej" required autocomplete="given-name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="second_name">Last Name</label>
+                        <input class="input" type="text" id="second_name" name="second_name"
+                               placeholder="e.g. Kumar" required autocomplete="family-name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input class="input" type="email" id="email" name="email"
+                               placeholder="e.g. anurej@example.com" required autocomplete="email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div style="position:relative;">
+                            <input class="input" type="password" id="password" name="password"
+                                   placeholder="Enter password" required style="padding-right:42px;">
+                            <button type="button" onclick="togglePass('password', this)"
+                                    style="position:absolute;right:12px;top:50%;transform:translateY(-50%);
+                                           background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.9rem;">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="gender" value="male" required> Male
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="gender" value="female"> Female
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="gender" value="other"> Other
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="country">Country</label>
+                        <select class="input" id="country" name="country" required>
+                            <option value="" disabled selected>Select a country</option>
+                            <option value="INDIA">🇮🇳 India</option>
+                            <option value="AMERICA">🇺🇸 America</option>
+                            <option value="IRELAND">🇮🇪 Ireland</option>
+                            <option value="UK">🇬🇧 United Kingdom</option>
+                            <option value="CANADA">🇨🇦 Canada</option>
+                            <option value="AUSTRALIA">🇦🇺 Australia</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>Hobbies</label>
+                        <div class="check-group">
+                            <label class="check-label"><input type="checkbox" name="hobbies" value="cricket"> 🏏 Cricket</label>
+                            <label class="check-label"><input type="checkbox" name="hobbies" value="movies"> 🎬 Movies</label>
+                            <label class="check-label"><input type="checkbox" name="hobbies" value="tv"> 📺 TV</label>
+                            <label class="check-label"><input type="checkbox" name="hobbies" value="music"> 🎵 Music</label>
+                            <label class="check-label"><input type="checkbox" name="hobbies" value="reading"> 📚 Reading</label>
+                            <label class="check-label"><input type="checkbox" name="hobbies" value="gaming"> 🎮 Gaming</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group full" style="display:flex; gap:10px; justify-content:flex-end; margin-top:8px;">
+                        <a href="{{ url_for('home') }}" class="btn btn-ghost">
+                            <i class="fas fa-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> Add Student
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
+<script>
+function togglePass(id, btn) {
+    const inp = document.getElementById(id);
+    const icon = btn.querySelector('i');
+    if (inp.type === 'password') {
+        inp.type = 'text';
+        icon.classList.replace('fa-eye','fa-eye-slash');
+    } else {
+        inp.type = 'password';
+        icon.classList.replace('fa-eye-slash','fa-eye');
+    }
+}
+</script>
 {% endblock %}
